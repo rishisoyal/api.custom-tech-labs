@@ -4,7 +4,6 @@ import { cors } from "hono/cors";
 import analyticsRouter from "./routes/analyticsRoute.js";
 import contentRouter from "./routes/contentRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-import { serve } from "bun";
 
 config();
 
@@ -34,7 +33,7 @@ app.route("/api/analytics", analyticsRouter);
 
 // dev server
 if (process.env.NODE_ENV === "development") {
-  serve({
+  Bun.serve({
     fetch: app.fetch,
   });
 }
