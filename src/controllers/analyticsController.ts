@@ -28,7 +28,7 @@ export async function getRealTimeAnalytics(c: Context) {
   }
 }
 
-export async function getGeneralStas(c: Context) {
+export async function getGeneralStats(c: Context) {
   const now = Date.now();
   const oneDayAgo = now - 24 * 60 * 60 * 1000;
   try {

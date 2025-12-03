@@ -4,6 +4,7 @@ import { cors } from "hono/cors";
 import analyticsRouter from "./routes/analyticsRoute.js";
 import contentRouter from "./routes/contentRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import { serve } from "bun";
 
 config();
 
@@ -31,5 +32,11 @@ app.route("/api/user", userRouter);
 app.route("/api/content", contentRouter);
 app.route("/api/analytics", analyticsRouter);
 
-// dev server # TODO
+// dev server
+if (process.env.NODE_ENV === "development") {
+  serve({
+    fetch: app.fetch,
+  });
+}
+
 export default app;

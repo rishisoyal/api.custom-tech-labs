@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { getGeneralStas, getRealTimeAnalytics, getMetrics } from "../controllers/analyticsController.js";
+import { getGeneralStats, getRealTimeAnalytics, getMetrics } from "../controllers/analyticsController.js";
 
 const analyticsRouter = new Hono()
 
 analyticsRouter.get("/realtime", getRealTimeAnalytics);
-analyticsRouter.get("/stats", getGeneralStas);
+analyticsRouter.get("/stats", getGeneralStats);
 analyticsRouter.get("/metrics", getMetrics);
 
 export default analyticsRouter

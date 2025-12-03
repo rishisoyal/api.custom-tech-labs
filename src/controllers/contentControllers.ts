@@ -32,7 +32,7 @@ export const getContent = async (c: Context) => {
   try {
 		await connectDB()
     const data = await Model.findOne({ page });
-    if (!data) return c.json({ message: "could not fetch data" }, 400);
+    if (!data) return c.json({ message: `this page does not have "${contentType}" content` }, 400);
 
     return c.json({ data }, 200);
   } catch (err) {
