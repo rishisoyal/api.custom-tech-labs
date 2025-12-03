@@ -1,5 +1,5 @@
 # deps
 /node_modules/
-
+/api/
 .env
 test.ts
