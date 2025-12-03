@@ -1,8 +1,8 @@
 import { SignJWT } from "jose";
 import { Context } from "hono";
-import User from "../models/UserModel";
+import User from "../models/UserModel.js";
 import { setCookie, deleteCookie, getCookie } from "hono/cookie";
-import connectDB from "../lib/mongoDB";
+import connectDB from "../lib/mongoDB.js";
 import * as bcrypt from 'bcrypt'
 
 // cache the secret

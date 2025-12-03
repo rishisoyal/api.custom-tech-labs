@@ -1,9 +1,9 @@
 import { config } from "dotenv";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import analyticsRouter from "./routes/analyticsRoute";
-import contentRouter from "./routes/contentRoutes";
-import userRouter from "./routes/userRoutes";
+import analyticsRouter from "./routes/analyticsRoute.js";
+import contentRouter from "./routes/contentRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 config();
 

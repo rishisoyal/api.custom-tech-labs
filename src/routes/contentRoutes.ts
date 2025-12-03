@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getContent, postContent } from "../controllers/contentControllers";
+import { getContent, postContent } from "../controllers/contentControllers.js";
 
 const contentRouter = new Hono();
 

@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getGeneralStas, getRealTimeAnalytics, getMetrics } from "../controllers/analyticsController";
+import { getGeneralStas, getRealTimeAnalytics, getMetrics } from "../controllers/analyticsController.js";
 
 const analyticsRouter = new Hono()
 

@@ -1,10 +1,10 @@
 import { Context } from "hono";
-import TextContent from "../models/TextContentModel";
-import MediaContent from "../models/MediaContentModel";
-import CardContent from "../models/CardContentModel";
+import TextContent from "../models/TextContentModel.js";
+import MediaContent from "../models/MediaContentModel.js";
+import CardContent from "../models/CardContentModel.js";
 import mongoose from "mongoose";
-import supabaseMediaUpload from "../lib/supabaseMediaUpload";
-import connectDB from "../lib/mongoDB";
+import supabaseMediaUpload from "../lib/supabaseMediaUpload.js";
+import connectDB from "../lib/mongoDB.js";
 
 const contentTypes = ["text", "media", "card"];
 const pages = ["home", "about", "solutions", "services", "industries", "contact"];
