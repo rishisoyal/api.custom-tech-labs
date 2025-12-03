@@ -3,7 +3,7 @@ import { Context } from "hono";
 import User from "../models/UserModel";
 import { setCookie, deleteCookie, getCookie } from "hono/cookie";
 import connectDB from "../lib/mongoDB";
-import bcrypt from 'bcrypt'
+import * as bcrypt from 'bcrypt'
 
 // cache the secret
 const SECRET = new TextEncoder().encode(process.env.TOKEN_SECRET);
