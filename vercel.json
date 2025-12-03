@@ -1,8 +1,8 @@
 {
   "functions": {
-    "api/**/*.ts": {
+    "api/**.ts": {
       "runtime": "vercel-edge@2"
     }
   },
-  "buildCommand": "tsc"
+  "buildCommand": "npm run build"
 }
