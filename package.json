@@ -24,6 +24,8 @@
     "@types/bcrypt": "^6.0.0",
     "@types/bun": "latest",
     "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19"
+    "@types/cors": "^2.8.19",
+    "ts-node": "^10.9.2",
+    "tsc": "^2.0.4"
   }
 }
