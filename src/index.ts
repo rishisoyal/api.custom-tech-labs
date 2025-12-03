@@ -1,9 +1,11 @@
 import { config } from "dotenv";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import analyticsRouter from "./routes/analyticsRoute.js";
+import analyticsRouter from "./routes/analyticsRoutes.js";
 import contentRouter from "./routes/contentRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import { serve } from "@hono/node-server";
+
 
 config();
 
@@ -33,9 +35,7 @@ app.route("/api/analytics", analyticsRouter);
 
 // dev server
 if (process.env.NODE_ENV === "development") {
-  Bun.serve({
-    fetch: app.fetch,
-  });
+  serve(app);
 }
 
 export default app;
