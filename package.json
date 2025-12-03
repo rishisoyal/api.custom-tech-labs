@@ -5,6 +5,9 @@
 		"dev": "nodemon src/index.ts",
 		"start": "node api/index.js"
 	},
+	"engines": {
+		"node": "24.x"
+	},
 	"dependencies": {
 		"@ffmpeg/ffmpeg": "^0.12.15",
 		"@ffmpeg/util": "^0.12.2",
