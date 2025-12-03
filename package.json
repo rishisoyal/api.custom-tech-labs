@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"dev": "bun --watch src/index.ts",
+		"dev": "nodemon src/index.ts",
 		"start": "node api/index.js"
 	},
 	"engines": {
@@ -25,6 +25,7 @@
 		"sharp": "^0.34.5"
 	},
 	"devDependencies": {
+		"@hono/node-server": "^1.19.6",
 		"@types/bcrypt": "^6.0.0",
 		"@types/bun": "latest",
 		"@types/cookie-parser": "^1.4.10",
