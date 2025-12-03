@@ -1,6 +1,5 @@
 {
 	"name": "main",
-	"type": "module",
 	"scripts": {
 		"build": "tsc",
 		"dev": "nodemon src/index.ts",
