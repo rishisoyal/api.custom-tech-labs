@@ -1,7 +1,8 @@
 {
+	"version": 2,
 	"functions": {
-		"src/index.ts": {
-			"runtime": "nodejs"
+		"api/**/*.js": {
+			"runtime": "node@20.x"
 		}
 	}
 }
