@@ -1,6 +1,5 @@
-import axios from "axios";
-import { Context } from "hono";
 import { config } from "dotenv";
+import { Context } from "hono";
 
 config();
 const UMAMI_API_KEY = process.env.UMAMI_API_KEY;
@@ -10,16 +9,12 @@ const UMAMI_WEBSITE_ID = process.env.UMAMI_WEBSITE_ID;
 export async function getRealTimeAnalytics(c: Context) {
   try {
     // fetch real time data
-    let res = await axios.get(
-      `${UMAMI_BASE_URL}/realtime/${UMAMI_WEBSITE_ID}`,
-      {
-        headers: {
-          "x-umami-api-key": UMAMI_API_KEY,
-        },
-      }
-    );
-    const realTimeData = res.data;
-    console.error(res);
+    let res = await fetch(`${UMAMI_BASE_URL}/realtime/${UMAMI_WEBSITE_ID}`, {
+      headers: {
+        "x-umami-api-key": UMAMI_API_KEY!,
+      },
+    });
+    const realTimeData = await res.json();
 
     return c.json({ realTimeData });
   } catch (error: any) {
@@ -33,20 +28,16 @@ export async function getGeneralStats(c: Context) {
   const oneDayAgo = now - 24 * 60 * 60 * 1000;
   try {
     // fetch real time data
-    let res = await axios.get(
-      `${UMAMI_BASE_URL}/websites/${UMAMI_WEBSITE_ID}/stats`,
+    let res = await fetch(
+      `${UMAMI_BASE_URL}/websites/${UMAMI_WEBSITE_ID}/stats?startAt=${oneDayAgo}&endAt=${now}`,
       {
         headers: {
-          "x-umami-api-key": UMAMI_API_KEY,
-        },
-        params: {
-          startAt: oneDayAgo,
-          endAt: now,
+          "x-umami-api-key": UMAMI_API_KEY!,
         },
       }
     );
 
-    const generalStats = res.data;
+    const generalStats = await res.json();
 
     return c.json({ generalStats });
   } catch (error: any) {
@@ -67,22 +58,17 @@ export async function getMetrics(c: Context) {
     );
 
   try {
-    // fetch real time data
-    let res = await axios.get(
-      `${UMAMI_BASE_URL}/websites/${UMAMI_WEBSITE_ID}/metrics`,
+    // fetch metrics
+    let res = await fetch(
+      `${UMAMI_BASE_URL}/websites/${UMAMI_WEBSITE_ID}/metrics?startAt=${oneDayAgo}&endAt=${now}&type=${type}`,
       {
         headers: {
-          "x-umami-api-key": UMAMI_API_KEY,
-        },
-        params: {
-          startAt: oneDayAgo,
-          endAt: now,
-          type: type,
+          "x-umami-api-key": UMAMI_API_KEY!,
         },
       }
     );
 
-    const metrics = res.data;
+    const metrics = await res.json();
 
     return c.json({ metrics }, 200);
   } catch (error: any) {

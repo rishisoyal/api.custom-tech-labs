@@ -3,7 +3,7 @@ import { Context } from "hono";
 import User from "../models/UserModel.js";
 import { setCookie, deleteCookie, getCookie } from "hono/cookie";
 import connectDB from "../lib/mongoDB.js";
-import * as bcrypt from 'bcrypt'
+import { compare } from "bcrypt";
 
 // cache the secret
 const SECRET = new TextEncoder().encode(process.env.TOKEN_SECRET);
@@ -17,11 +17,11 @@ export async function userLogIn(c: Context) {
     return c.json({ error: "Missing credentials" }, 400);
   }
 
-	await connectDB()
+  await connectDB();
   const user = await User.findOne({ name });
   if (!user) return c.json({ error: "User not found" }, 401);
 
-  const valid = await bcrypt.compare(password, user.password_hash);
+  const valid = await compare(password, user.password_hash);
   if (!valid) return c.json({ error: "Invalid credentials" }, 401);
 
   const token = await new SignJWT({
@@ -39,7 +39,7 @@ export async function userLogIn(c: Context) {
     secure: isProd,
     sameSite: isProd ? "none" : "lax",
     path: "/",
-    maxAge: 2 * 24 * 60 * 60,
+    maxAge: 2 * 24 * 60 * 60, // 2 days
   });
 
   return c.json({ message: "success" }, 200);

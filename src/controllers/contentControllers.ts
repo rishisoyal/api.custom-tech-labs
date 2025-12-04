@@ -7,7 +7,14 @@ import supabaseMediaUpload from "../lib/supabaseMediaUpload.js";
 import connectDB from "../lib/mongoDB.js";
 
 const contentTypes = ["text", "media", "card"];
-const pages = ["home", "about", "solutions", "services", "industries", "contact"];
+const pages = [
+  "home",
+  "about",
+  "solutions",
+  "services",
+  "industries",
+  "contact",
+];
 
 const contentModels: Record<string, mongoose.Model<any>> = {
   text: TextContent,
@@ -30,9 +37,13 @@ export const getContent = async (c: Context) => {
 
   const Model = contentModels[contentType];
   try {
-		await connectDB()
+    await connectDB();
     const data = await Model.findOne({ page });
-    if (!data) return c.json({ message: `this page does not have "${contentType}" content` }, 400);
+    if (!data)
+      return c.json(
+        { message: `this page does not have ${contentType} content` },
+        400
+      );
 
     return c.json({ data }, 200);
   } catch (err) {
@@ -44,7 +55,8 @@ export const postContent = async (c: Context) => {
   const query = c.req.query();
   const { contentType, page, blockType } = query;
 
-  if (!contentType) return c.json({ message: "please provide a content type" }, 400);
+  if (!contentType)
+    return c.json({ message: "please provide a content type" }, 400);
   if (!page) return c.json({ message: "please provide page" }, 400);
   if (!blockType) return c.json({ message: "please provide block type" }, 400);
 
@@ -53,7 +65,7 @@ export const postContent = async (c: Context) => {
   if (!pages.includes(page))
     return c.json({ message: `could not find page ${page}` }, 400);
 
-	await connectDB()
+  await connectDB();
   // TEXT
   if (contentType === "text") {
     const { title, subtitle, text } = await c.req.json();
@@ -71,12 +83,14 @@ export const postContent = async (c: Context) => {
         { arrayFilters: [{ "item.block_type": blockType }] }
       );
 
-      if (!data)
-        return c.json({ message: "could not post data" }, 401);
+      if (!data) return c.json({ message: "could not post data" }, 401);
 
       return c.json({ message: "successfully updated data", data }, 201);
     } catch (err: any) {
-      return c.json({ message: "error updating text", error: err.message }, 500);
+      return c.json(
+        { message: "error updating text", error: err.message },
+        500
+      );
     }
   }
 
@@ -131,12 +145,14 @@ export const postContent = async (c: Context) => {
         }
       );
 
-      if (!data)
-        return c.json({ message: "could not update card data" }, 400);
+      if (!data) return c.json({ message: "could not update card data" }, 400);
 
       return c.json({ message: "success", data }, 201);
     } catch (err: any) {
-      return c.json({ message: "error updating cards", error: err.message }, 500);
+      return c.json(
+        { message: "error updating cards", error: err.message },
+        500
+      );
     }
   }
 };
