@@ -6,7 +6,6 @@ import contentRouter from "./routes/contentRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import { serve } from "@hono/node-server";
 
-
 config();
 
 // ------------------------------
@@ -19,11 +18,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
 app.use(
   "*",
   cors({
-    origin: (origin) => {
-      if (!origin) return "*";
-      if (allowedOrigins.includes(origin)) return origin;
-      return ""; // block
-    },
+    origin: allowedOrigins,
     credentials: true,
   })
 );

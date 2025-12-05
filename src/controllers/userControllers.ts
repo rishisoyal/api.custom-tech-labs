@@ -33,7 +33,7 @@ export async function userLogIn(c: Context) {
     .setExpirationTime("2d")
     .sign(SECRET);
 
-  const isProd = process.env.BUN_ENV === "production";
+  const isProd = process.env.NODE_ENV === "production";
 
   setCookie(c, "auth_token", token, {
     httpOnly: true,
