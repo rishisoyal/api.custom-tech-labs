@@ -13,9 +13,20 @@ if (!MONGODB_URI) {
 let isConnected = false;
 export default async function connectDB() {
   if (!isConnected) {
-    await mongoose.connect(process.env.MONGODB_URI!, {
-      dbName: "company_website",
-    });
+    mongoose
+      .connect(process.env.MONGODB_URI!, {
+        dbName: "company_website",
+      })
+      .then(() => {
+        console.log("-----------------------");
+        console.log("connected to database");
+        console.log("-----------------------");
+      })
+      .catch((error) => {
+        console.error("-----------------------");
+        console.error("could not connect to database\n" + error);
+        console.error("-----------------------");
+      });
     isConnected = true;
   }
 }

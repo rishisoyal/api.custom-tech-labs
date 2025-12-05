@@ -52,8 +52,7 @@ export const getContent = async (c: Context) => {
 };
 
 export const postContent = async (c: Context) => {
-  const query = c.req.query();
-  const { contentType, page, blockType } = query;
+  const { contentType, page, blockType } = c.req.query();
 
   if (!contentType)
     return c.json({ message: "please provide a content type" }, 400);
@@ -96,8 +95,9 @@ export const postContent = async (c: Context) => {
 
   // MEDIA
   if (contentType === "media") {
-    const form = await c.req.parseBody();
-    const file = form["media"] as File;
+		console.log(await c.req.formData());
+    const body = await c.req.formData();
+    const file = body.get("media") as File;
 
     if (!file) return c.json({ message: "no file uploaded" }, 400);
 
@@ -129,9 +129,9 @@ export const postContent = async (c: Context) => {
     if (!cards || !Array.isArray(cards))
       return c.json({ message: "cards array is required" }, 401);
 
-    const newCards = cards.map((c: any) => ({
-      ...c,
-      _id: new mongoose.Types.ObjectId(c._id),
+    const newCards = cards.map((card: any) => ({
+      ...card,
+      _id: new mongoose.Types.ObjectId(card._id),
     }));
 
     try {

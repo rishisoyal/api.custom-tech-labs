@@ -1,5 +1,8 @@
 import { supabase } from "./supabase.js";
 
+/**
+ * Upload media file like webm or gif
+ */
 export default async function supabaseMediaUpload(
   file: File
 ): Promise<string | null> {

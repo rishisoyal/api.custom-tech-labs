@@ -1,9 +1,10 @@
-import { SignJWT } from "jose";
+import { decodeJwt, SignJWT } from "jose";
 import { Context } from "hono";
 import User from "../models/UserModel.js";
 import { setCookie, deleteCookie, getCookie } from "hono/cookie";
 import connectDB from "../lib/mongoDB.js";
 import { compare } from "bcrypt";
+import mongoose from "mongoose";
 
 // cache the secret
 const SECRET = new TextEncoder().encode(process.env.TOKEN_SECRET);
@@ -54,4 +55,29 @@ export async function userLogOut(c: Context) {
   deleteCookie(c, "auth_token", { path: "/" });
 
   return c.json({ message: "logged out" }, 200);
+}
+
+export async function userAuthentication(c: Context) {
+  const token = getCookie(c, "auth_token");
+  if (!token) return c.json({ error: "Token not found" }, 401);
+  const payload = decodeJwt(token);
+  if (!payload.uid || !payload.role)
+    return c.json(
+      {
+        message: "user not found",
+      },
+      401
+    );
+
+  await connectDB();
+  const user = await User.findOne({
+    _id: new mongoose.Types.ObjectId(payload.uid as string),
+  });
+  if (!user) return c.json({ error: "User not found" }, 401);
+  return c.json(
+    {
+      message: "valid user",
+    },
+    202
+  );
 }
