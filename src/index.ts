@@ -30,7 +30,11 @@ app.route("/api/analytics", analyticsRouter);
 
 // dev server (using bun)
 if (process.env.NODE_ENV === "development") {
-  serve(app);
+  serve({
+    fetch: app.fetch,
+    port: parseInt(process.env.PORT!) || 8000,
+  });
 }
+
 
 export default app;
