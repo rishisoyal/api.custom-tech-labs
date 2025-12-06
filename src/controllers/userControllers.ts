@@ -57,27 +57,37 @@ export async function userLogOut(c: Context) {
   return c.json({ message: "logged out" }, 200);
 }
 
-export async function userAuthentication(c: Context) {
-  const token = getCookie(c, "auth_token");
-  if (!token) return c.json({ error: "Token not found" }, 401);
-  const payload = decodeJwt(token);
-  if (!payload.uid || !payload.role)
+// get
+export async function userAuth(c: Context) {
+  try {
+    const token = getCookie(c, "auth_token");
+    if (!token) return c.json({ error: "Token not found" }, 401);
+    const payload = decodeJwt(token);
+    if (!payload.uid || !payload.role)
+      return c.json(
+        {
+          message: "user not found",
+        },
+        401
+      );
+
+    await connectDB();
+    const user = await User.findOne({
+      _id: new mongoose.Types.ObjectId(payload.uid as string),
+    });
+    if (!user) return c.json({ error: "User not found" }, 401);
     return c.json(
       {
-        message: "user not found",
+        message: "valid user",
       },
-      401
+      202
     );
-
-  await connectDB();
-  const user = await User.findOne({
-    _id: new mongoose.Types.ObjectId(payload.uid as string),
-  });
-  if (!user) return c.json({ error: "User not found" }, 401);
-  return c.json(
-    {
-      message: "valid user",
-    },
-    202
-  );
+  } catch (error) {
+    return c.json(
+      {
+        error: error,
+      },
+      500
+    );
+  }
 }
