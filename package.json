@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"dev": "bun --watch src/index.ts",
+		"dev": "bun --watch src/dev_server.ts",
 		"start": "node api/index.js"
 	},
 	"engines": {

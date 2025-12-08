@@ -1,7 +1,5 @@
-import { config } from "dotenv";
 import { Context } from "hono";
 
-config();
 const UMAMI_API_KEY = process.env.UMAMI_API_KEY;
 const UMAMI_BASE_URL = process.env.UMAMI_BASE_URL;
 const UMAMI_WEBSITE_ID = process.env.UMAMI_WEBSITE_ID;
