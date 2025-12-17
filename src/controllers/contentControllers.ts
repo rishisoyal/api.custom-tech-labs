@@ -68,22 +68,41 @@ export const postContent = async (c: Context) => {
   await connectDB();
   // TEXT
   if (contentType === "text") {
-    const { title, subtitle, text } = await c.req.json();
-
     try {
-      const data = await TextContent.findOneAndUpdate(
-        { page },
+      if (
+        !c.req.header()["content-type"] ||
+        c.req.header()["content-type"] !== "application/json"
+      ) {
+        return c.json({ message: "Invalid content type" }, 400);
+      }
+
+      const data = await TextContent.findOne({
+        page,
+        "content.block_type": blockType,
+      });
+      if (!data)
+        return c.json(
+          {
+            message: "invalid block type",
+          },
+          400
+        );
+
+      const { title, subtitle, text } = await c.req.json();
+
+      const updatedData = await data.updateOne(
         {
           $set: {
-            "content.$[item].title": title || "",
-            "content.$[item].subtitle": subtitle || "",
-            "content.$[item].text": text || "",
+            "content.$[item].title": title,
+            "content.$[item].subtitle": subtitle,
+            "content.$[item].text": text,
           },
         },
-        { arrayFilters: [{ "item.block_type": blockType }] }
+        { arrayFilters: [{ "item.block_type": blockType }], new: true }
       );
 
-      if (!data) return c.json({ message: "could not post data" }, 401);
+      if (!updatedData)
+        return c.json({ message: "could not update data" }, 400);
 
       return c.json({ message: "successfully updated data", data }, 201);
     } catch (err: any) {
@@ -96,31 +115,49 @@ export const postContent = async (c: Context) => {
 
   // MEDIA
   if (contentType === "media") {
-    // console.log(await c.req.formData());
-    const body = await c.req.formData();
-    const file = body.get("media") as File;
-
-    if (!file) return c.json({ message: "no file uploaded" }, 400);
+    console.log(c.req.header());
+    if (
+      !c.req.header()["content-type"] ||
+      !c.req.header()["content-type"].startsWith("multipart/form-data")
+    ) {
+      return c.json({ message: "Invalid content type" }, 400);
+    }
 
     try {
-      // const media_path = await supabaseMediaUpload(file);
+      const body = await c.req.formData();
+      const file = body.get("media") as File;
+
+      if (!file) return c.json({ message: "no file uploaded" }, 400);
+
+      const data = await MediaContent.findOne({
+        page,
+        "content.block_type": blockType,
+      });
+
+      if (!data)
+        return c.json(
+          {
+            message: "invalid block type",
+          },
+          400
+        );
+
       const media_path = await cloudinaryMediaUpload(file);
-      console.log(media_path);
 
       if (!media_path)
-        return c.json({ message: "could not upload media" }, 400);
+        return c.json({ message: "could not upload media to cloudinary" }, 400);
 
-      const data = await MediaContent.findOneAndUpdate(
-        { page, "content.block_type": blockType },
+      const updatedData = await data.updateOne(
         {
           $set: { "content.$[item].media_path": media_path },
         },
-        { arrayFilters: [{ "item.block_type": blockType }] }
+        { arrayFilters: [{ "item.block_type": blockType }], new: true }
       );
 
-      if (!data) return c.json({ message: "could not post data" }, 400);
+      if (!updatedData)
+        return c.json({ message: "could not update data" }, 400);
 
-      return c.json({ message: "success", data }, 200);
+      return c.json({ message: "success", updatedData }, 200);
     } catch (err: any) {
       return c.json({ message: "error", error: err.message }, 500);
     }
@@ -128,6 +165,26 @@ export const postContent = async (c: Context) => {
 
   // CARD
   if (contentType === "card") {
+    if (
+      !c.req.header()["content-type"] ||
+      c.req.header()["content-type"] !== "application/json"
+    ) {
+      return c.json({ message: "Invalid content type" }, 400);
+    }
+
+    const data = await CardContent.findOne({
+      page,
+      "content.block_type": blockType,
+    });
+
+    if (!data)
+      return c.json(
+        {
+          message: "invalid block type",
+        },
+        400
+      );
+
     const { cards } = await c.req.json();
 
     if (!cards || !Array.isArray(cards))
@@ -139,8 +196,7 @@ export const postContent = async (c: Context) => {
     }));
 
     try {
-      const data = await CardContent.findOneAndUpdate(
-        { page },
+      const updatedData = await data.updateOne(
         { $set: { "content.$[item].cards": newCards } },
         {
           arrayFilters: [{ "item.block_type": blockType }],
@@ -149,9 +205,10 @@ export const postContent = async (c: Context) => {
         }
       );
 
-      if (!data) return c.json({ message: "could not update card data" }, 400);
+      if (!updatedData)
+        return c.json({ message: "could not update data" }, 400);
 
-      return c.json({ message: "success", data }, 201);
+      return c.json({ message: "success", updatedData }, 201);
     } catch (err: any) {
       return c.json(
         { message: "error updating cards", error: err.message },
