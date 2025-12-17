@@ -18,14 +18,10 @@ export default async function connectDB() {
         dbName: "company_website",
       })
       .then(() => {
-        console.log("-----------------------");
-        console.log("connected to database");
-        console.log("-----------------------");
+        console.log(`${new Date()}:\nDatabase connected`);
       })
       .catch((error) => {
-        console.error("-----------------------");
-        console.error("could not connect to database\n" + error);
-        console.error("-----------------------");
+        console.error(`${new Date()}:\nError connecting database\n${error}`);
       });
     isConnected = true;
   }

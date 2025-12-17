@@ -5,6 +5,7 @@ import CardContent from "../models/CardContentModel.js";
 import mongoose from "mongoose";
 import supabaseMediaUpload from "../lib/supabaseMediaUpload.js";
 import connectDB from "../lib/mongoDB.js";
+import { cloudinaryMediaUpload } from "../lib/cloudinary.js";
 
 const contentTypes = ["text", "media", "card"];
 const pages = [
@@ -95,16 +96,19 @@ export const postContent = async (c: Context) => {
 
   // MEDIA
   if (contentType === "media") {
-		console.log(await c.req.formData());
+    // console.log(await c.req.formData());
     const body = await c.req.formData();
     const file = body.get("media") as File;
 
     if (!file) return c.json({ message: "no file uploaded" }, 400);
 
     try {
-      const media_path = await supabaseMediaUpload(file);
+      // const media_path = await supabaseMediaUpload(file);
+      const media_path = await cloudinaryMediaUpload(file);
+      console.log(media_path);
+
       if (!media_path)
-        return c.json({ message: "could not upload to supabase" }, 401);
+        return c.json({ message: "could not upload media" }, 400);
 
       const data = await MediaContent.findOneAndUpdate(
         { page, "content.block_type": blockType },

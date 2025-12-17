@@ -5,6 +5,7 @@ import analyticsRouter from "./routes/analyticsRoutes.js";
 import contentRouter from "./routes/contentRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 
+// load .env file contents into process.env
 config();
 
 // ------------------------------
