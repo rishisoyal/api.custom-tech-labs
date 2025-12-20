@@ -4,3 +4,4 @@
 .env
 test.ts
 dev_server.ts
+server.ts

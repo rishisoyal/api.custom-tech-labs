@@ -1,4 +1,4 @@
-import { decodeJwt, SignJWT } from "jose";
+import { decodeJwt, jwtVerify, SignJWT } from "jose";
 import { Context } from "hono";
 import User from "../models/UserModel.js";
 import { setCookie, deleteCookie, getCookie } from "hono/cookie";
@@ -11,11 +11,21 @@ const SECRET = new TextEncoder().encode(process.env.TOKEN_SECRET);
 
 // post
 export async function userLogIn(c: Context) {
-  const body = await c.req.json();
+  let body: { name: string; password: string } | null = null;
+  try {
+    body = await c.req.json();
+  } catch (error: any) {
+    return c.json({ message: "Missing credentials" }, 400);
+  }
+
+  if (!body) {
+    return c.json({ message: "Missing credentials" }, 400);
+  }
+
   const { name, password } = body;
 
   if (!name || !password) {
-    return c.json({ error: "Missing credentials" }, 400);
+    return c.json({ message: "Missing credentials" }, 400);
   }
 
   await connectDB();
@@ -49,8 +59,24 @@ export async function userLogIn(c: Context) {
 // delete
 export async function userLogOut(c: Context) {
   const token = getCookie(c, "auth_token");
-
   if (!token) return c.json({ error: "Token not found" }, 401);
+  try {
+    const verifyResult = await jwtVerify(token, SECRET);
+    if (!verifyResult.payload.uid || !verifyResult.payload.role)
+      return c.json(
+        {
+          message: "user not found",
+        },
+        401
+      );
+    await connectDB();
+    const user = await User.findOne({
+      _id: new mongoose.Types.ObjectId(verifyResult.payload.uid as string),
+    });
+    if (!user) return c.json({ error: "User not found" }, 401);
+  } catch (error) {
+    return c.json({ message: "invalid jwt token" }, 401);
+  }
 
   deleteCookie(c, "auth_token", { path: "/" });
 

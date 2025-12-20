@@ -28,13 +28,13 @@ export const getContent = async (c: Context) => {
   const { page, contentType } = query;
 
   if (!contentType)
-    return c.json({ message: "please provide a content type to fetch" }, 401);
+    return c.json({ message: "please provide a content type to fetch" }, 400);
   if (!page)
-    return c.json({ message: "please provide page to fetch data from" }, 401);
+    return c.json({ message: "please provide page to fetch data from" }, 400);
   if (!contentTypes.includes(contentType))
-    return c.json({ message: `invalid content type ${contentType}` }, 401);
+    return c.json({ message: `invalid content type ${contentType}` }, 400);
   if (!pages.includes(page))
-    return c.json({ message: `could not find page ${page}` }, 401);
+    return c.json({ message: `could not find page ${page}` }, 400);
 
   const Model = contentModels[contentType];
   try {
@@ -90,7 +90,8 @@ export const postContent = async (c: Context) => {
 
       const { title, subtitle, text } = await c.req.json();
 
-      const updatedData = await data.updateOne(
+      const updatedData = await TextContent.findByIdAndUpdate(
+        data._id,
         {
           $set: {
             "content.$[item].title": title,
@@ -104,7 +105,9 @@ export const postContent = async (c: Context) => {
       if (!updatedData)
         return c.json({ message: "could not update data" }, 400);
 
-      return c.json({ message: "successfully updated data", data }, 201);
+      console.log(updatedData);
+      
+      return c.json({ message: "successfully updated data", updatedData }, 201);
     } catch (err: any) {
       return c.json(
         { message: "error updating text", error: err.message },
@@ -147,7 +150,8 @@ export const postContent = async (c: Context) => {
       if (!media_path)
         return c.json({ message: "could not upload media to cloudinary" }, 400);
 
-      const updatedData = await data.updateOne(
+      const updatedData = await MediaContent.findOneAndUpdate(
+        data._id,
         {
           $set: { "content.$[item].media_path": media_path },
         },
@@ -188,7 +192,7 @@ export const postContent = async (c: Context) => {
     const { cards } = await c.req.json();
 
     if (!cards || !Array.isArray(cards))
-      return c.json({ message: "cards array is required" }, 401);
+      return c.json({ message: "cards array is required" }, 400);
 
     const newCards = cards.map((card: any) => ({
       ...card,
@@ -196,7 +200,8 @@ export const postContent = async (c: Context) => {
     }));
 
     try {
-      const updatedData = await data.updateOne(
+      const updatedData = await CardContent.findOneAndUpdate(
+        data._id,
         { $set: { "content.$[item].cards": newCards } },
         {
           arrayFilters: [{ "item.block_type": blockType }],
